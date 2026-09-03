@@ -227,3 +227,41 @@ def test_the_vector_store_holds_exactly_one_point_for_the_document(
     assert stack.qdrant_point(
         settings.qdrant.url, settings.qdrant.collection, stable_point_id(replay.doc_id)
     ) is not None
+
+
+def test_replay_proof_is_recorded(settings: Settings, replay: Replay) -> None:
+    """Persist the asserted before/after values used for the submission."""
+    from lab28_platform import delta_store
+
+    rows_after_replay = [
+        row
+        for row in delta_store.read_rows(settings.feedback_table)
+        if row.get("asker_id") == replay.asker_id
+    ]
+    records = stack.read_topic(settings.kafka.bootstrap_servers, settings.kafka.topic_raw)
+    deliveries = [
+        record
+        for record in records
+        if record.value and record.value.get("idempotency_key") == replay.idempotency_key
+    ]
+    stack.write_evidence(
+        "journey-j2-idempotent-replay.json",
+        {
+            "journey": "IT-J2-idempotent-replay",
+            "asker_id": replay.asker_id,
+            "doc_id": replay.doc_id,
+            "idempotency_key": replay.idempotency_key,
+            "distinct_event_ids": sorted(response["event_id"] for response in replay.accepted),
+            "kafka_delivery_count": len(deliveries),
+            "delta_rows_after_first_run": len(replay.rows_after_first),
+            "delta_rows_after_replay": len(rows_after_replay),
+            "delta_version_after_first_run": replay.version_after_first,
+            "delta_version_after_replay": delta_store.current_version(settings.feedback_table),
+            "first_dag_run_id": replay.first_run["dag_run_id"],
+            "second_dag_run_id": replay.second_run["dag_run_id"],
+            "qdrant_points_for_document": stack.qdrant_count(
+                settings.qdrant.url, settings.qdrant.collection, doc_id=replay.doc_id
+            ),
+            "assertion": "three Kafka deliveries produced one Delta row and one Qdrant point",
+        },
+    )

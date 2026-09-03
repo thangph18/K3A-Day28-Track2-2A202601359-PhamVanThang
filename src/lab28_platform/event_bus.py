@@ -175,8 +175,13 @@ class EventPublisher:
                 "lab28.schema_version": event.schema_version,
             },
         ):
+            # Kafka's record key is the entity id so related events stay on one
+            # partition.  The idempotency header is a different contract: for
+            # ingestion events it must carry the logical Delta de-duplication
+            # key, not the partition key.
+            idempotency_key = event.idempotency_key if isinstance(event, IngestionEvent) else key
             headers = integration_tasks.event_headers(
-                current_traceparent() or event.traceparent, key
+                current_traceparent() or event.traceparent, idempotency_key
             )
             headers.append(("schema_version", event.schema_version.encode("utf-8")))
             try:
@@ -267,10 +272,14 @@ class BatchConsumer:
         poison: list[DeadLetterEnvelope] = []
         idle = 0
 
+        rebalance_waits = 0
         while len(decoded) + len(poison) < max_messages and idle < idle_polls:
             message = self._consumer.poll(poll_timeout)
             if message is None:
-                idle += 1
+                if not self._consumer.assignment() and rebalance_waits < 15:
+                    rebalance_waits += 1
+                else:
+                    idle += 1
                 continue
             if message.error():
                 error = message.error()

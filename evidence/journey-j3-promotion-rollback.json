@@ -1,0 +1,26 @@
+{
+  "evidence_schema_version": "1",
+  "captured_at": "2026-09-03T05:39:56.199814+00:00",
+  "git_sha": "3115c5583d622e9d76befe034fc5e3f1ef34ec23",
+  "working_tree_dirty": true,
+  "producer": "pytest live integration journey",
+  "journey": "IT-J3-promotion-rollback",
+  "model_name": "lab28-rag-release",
+  "alias": "champion",
+  "starting_version": "2",
+  "promoted_version": "10",
+  "promoted_run_id": "1b21b575b22047978289832b749d74e6",
+  "rolled_back_version": "9",
+  "resolved_after_rollback": {
+    "name": "lab28-rag-release",
+    "version": "9",
+    "run_id": "5b7c291a9ed941e8a42343e2e7575554",
+    "alias": "champion",
+    "prompt_version": "it-j3-49e037cf",
+    "vllm_model_id": "Qwen/Qwen3-1.7B",
+    "embedding_model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2@faf4aa4225822f3bc6376869cb1164e8e3feedd0",
+    "delta_version": 25,
+    "top_k": 3
+  },
+  "assertion": "the alias moved to a new release and resolved after rollback"
+}

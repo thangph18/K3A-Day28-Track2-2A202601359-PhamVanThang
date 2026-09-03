@@ -1,0 +1,25 @@
+{
+  "evidence_schema_version": "1",
+  "captured_at": "2026-09-03T05:03:33.787815+00:00",
+  "git_sha": "3115c5583d622e9d76befe034fc5e3f1ef34ec23",
+  "working_tree_dirty": true,
+  "producer": "pytest live integration journey",
+  "journey": "IT-J2-idempotent-replay",
+  "asker_id": "it-j2-642bbb8c",
+  "doc_id": "it-j2-doc-642bbb8c",
+  "idempotency_key": "fb:it-j2-642bbb8c:489c3f80cf308067f9be5a664cff5efc",
+  "distinct_event_ids": [
+    "5d4f17c5a5604a28b85878517250dc63",
+    "5d7fb4f91d1e455a84213f2bbae878cd",
+    "aee63fa3c34a464fa90f440a0b2bb1a2"
+  ],
+  "kafka_delivery_count": 3,
+  "delta_rows_after_first_run": 1,
+  "delta_rows_after_replay": 1,
+  "delta_version_after_first_run": 21,
+  "delta_version_after_replay": 22,
+  "first_dag_run_id": "it-bbc1486d",
+  "second_dag_run_id": "it-7828dfdf",
+  "qdrant_points_for_document": 1,
+  "assertion": "three Kafka deliveries produced one Delta row and one Qdrant point"
+}

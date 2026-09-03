@@ -33,6 +33,7 @@ import uuid
 from collections.abc import Callable, Iterator, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -140,9 +141,34 @@ def dependency_down(service: str) -> Iterator[None]:
 
 
 def write_evidence(name: str, payload: Any) -> Path:
-    """Write one demo evidence file and return its path."""
+    """Write timestamped, commit-addressable demo evidence and return its path."""
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
     path = EVIDENCE_DIR / name
+    if isinstance(payload, dict):
+        revision = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        ).stdout.strip()
+        dirty = bool(
+            subprocess.run(
+                ["git", "status", "--porcelain", "--untracked-files=no"],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            ).stdout.strip()
+        )
+        payload = {
+            "evidence_schema_version": "1",
+            "captured_at": datetime.now(UTC).isoformat(),
+            "git_sha": revision or "unavailable",
+            "working_tree_dirty": dirty,
+            "producer": "pytest live integration journey",
+            **payload,
+        }
     path.write_text(
         json.dumps(payload, indent=2, ensure_ascii=False, default=str), encoding="utf-8"
     )

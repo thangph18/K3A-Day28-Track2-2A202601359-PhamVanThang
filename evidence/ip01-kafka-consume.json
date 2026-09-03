@@ -1,0 +1,34 @@
+{
+  "evidence_schema_version": "1",
+  "captured_at": "2026-09-03T05:02:09.556285+00:00",
+  "git_sha": "3115c5583d622e9d76befe034fc5e3f1ef34ec23",
+  "working_tree_dirty": true,
+  "producer": "pytest live integration journey",
+  "topic": "data.raw",
+  "key": "it-j1-1c2a55e9",
+  "partition": 0,
+  "offset": 33,
+  "headers": {
+    "idempotency-key": "fb:it-j1-1c2a55e9:d7dade5e375be71b57f16f3a736872a7",
+    "traceparent": "00-ab0804dbe783449e9e5ce571a8e6b530-33c07de03da56edc-01",
+    "schema_version": "1"
+  },
+  "trace_id": "ab0804dbe783449e9e5ce571a8e6b530",
+  "value": {
+    "schema_version": "1",
+    "event_id": "8e0874cbe4ea4d2bb22e9f4b3d642638",
+    "idempotency_key": "fb:it-j1-1c2a55e9:d7dade5e375be71b57f16f3a736872a7",
+    "entity_id": "it-j1-1c2a55e9",
+    "occurred_at": "2026-09-03T05:01:23.201968Z",
+    "producer": "lab28-api",
+    "traceparent": "00-ab0804dbe783449e9e5ce571a8e6b530-cf5d7459afa04608-01",
+    "payload": {
+      "kind": "feedback",
+      "asker_id": "it-j1-1c2a55e9",
+      "text": "Nền tảng chạy ổn định trong bài kiểm thử 1c2a55e9.",
+      "rating": 5,
+      "locale": "vi",
+      "label": "positive"
+    }
+  }
+}

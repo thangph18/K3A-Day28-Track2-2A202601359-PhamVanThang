@@ -225,6 +225,7 @@ services:
       LAB28_VLLM_MODEL_ID: ${LAB28_VLLM_MODEL_ID:-Qwen/Qwen3-1.7B}
       LAB28_VLLM_REQUIRE_REAL: ${LAB28_VLLM_REQUIRE_REAL:-false}
       OTEL_SERVICE_NAME: lab28-api
+      PYTHONPATH: /workspace/src
     ports:
       - "${LAB28_API_PORT:-8000}:8000"
     extra_hosts:

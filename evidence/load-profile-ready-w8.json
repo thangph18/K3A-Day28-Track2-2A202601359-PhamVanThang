@@ -1,0 +1,36 @@
+{
+  "evidence_schema_version": "1",
+  "captured_at": "2026-09-03T05:07:53.763812+00:00",
+  "git_sha": "3115c5583d622e9d76befe034fc5e3f1ef34ec23",
+  "working_tree_dirty": true,
+  "target": "http://localhost:8080/ready",
+  "method": "GET",
+  "requests": 200,
+  "workers": 8,
+  "warmup_requests": 5,
+  "status_counts": {
+    "200": 28,
+    "429": 172
+  },
+  "error_counts": {
+    "http_error: Too Many Requests": 172
+  },
+  "success_rate": 0.14,
+  "latency_ms": {
+    "all_responses": {
+      "p50": 5.858200020156801,
+      "p95": 502.2434000275098,
+      "p99": 647.3573999828659
+    },
+    "successful_responses": {
+      "p50": 482.84219997003675,
+      "p95": 650.2847999799997,
+      "p99": 901.1955999885686
+    }
+  },
+  "environment": {
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.15",
+    "logical_cpus": 16
+  }
+}

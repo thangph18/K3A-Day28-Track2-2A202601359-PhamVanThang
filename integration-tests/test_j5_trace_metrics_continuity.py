@@ -187,15 +187,23 @@ def test_the_readiness_verdict_is_visible_as_a_gauge(
         component["name"]: component["ready"] for component in body["components"]
     }
 
-    series = stack.wait_until(
-        "Prometheus to scrape the component readiness gauges",
-        lambda: prometheus.query("lab28_component_ready"),
+    def matching_gauges() -> dict[str, bool] | None:
+        series = prometheus.query("lab28_component_ready")
+        published = {
+            entry["metric"]["component"]: float(entry["value"][1]) == 1.0 for entry in series
+        }
+        if set(reported) <= set(published) and all(
+            published[name] == ready for name, ready in reported.items()
+        ):
+            return published
+        return None
+
+    published = stack.wait_until(
+        "Prometheus to scrape the component readiness gauges matching /ready",
+        matching_gauges,
         timeout=90.0,
-        interval=5.0,
+        interval=2.0,
     )
-    published = {
-        entry["metric"]["component"]: float(entry["value"][1]) == 1.0 for entry in series
-    }
 
     assert set(reported) <= set(published), (
         f"components missing from the gauge: {sorted(set(reported) - set(published))}"

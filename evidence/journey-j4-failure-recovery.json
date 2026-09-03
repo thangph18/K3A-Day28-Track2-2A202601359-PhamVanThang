@@ -1,0 +1,36 @@
+{
+  "evidence_schema_version": "1",
+  "captured_at": "2026-09-03T05:05:39.913029+00:00",
+  "git_sha": "3115c5583d622e9d76befe034fc5e3f1ef34ec23",
+  "working_tree_dirty": true,
+  "producer": "pytest live integration journey",
+  "journey": "IT-J4-degraded-recovery",
+  "baseline": {
+    "http_status": 200,
+    "readiness": "degraded"
+  },
+  "recovered": {
+    "http_status": 200,
+    "readiness": "degraded"
+  },
+  "dependency_recovery": {
+    "feast_ready": true,
+    "qdrant_ready": true
+  },
+  "poison_message": {
+    "dag_run_id": "it-e38f1753",
+    "dead_letters_before": 6,
+    "dead_letters_after": 7,
+    "good_rows_preserved": 1
+  },
+  "dlq_replay": {
+    "dag_run_id": "it-52cdd2ef",
+    "result": {
+      "replayed": 4,
+      "skipped": 4
+    },
+    "rows_after_replay": 1,
+    "idempotency_key": "fb:it-j4-replay-6157c27c:00a1922c0b37373ff7dc2053422d7a1f"
+  },
+  "assertion": "dependencies recovered; good data survived poison input; replay produced one row"
+}

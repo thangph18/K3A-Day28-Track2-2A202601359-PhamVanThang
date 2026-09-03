@@ -41,6 +41,8 @@ from airflow.sdk import Asset, dag, task
 # imported by exactly two callers (this DAG and a shell) and publishing it as a
 # distribution would only add a build step to change one SQL statement.
 REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT / "src"))
 if str(REPO_ROOT / "spark") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "spark"))
 

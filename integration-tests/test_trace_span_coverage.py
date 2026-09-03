@@ -14,6 +14,7 @@ the code and the contract quietly stops describing the system.
 
 from __future__ import annotations
 
+import contextlib
 import os
 from dataclasses import dataclass
 from typing import Any
@@ -106,6 +107,19 @@ def test_every_required_span_appears_on_one_trace(
     """The whole demo claim, in one assertion: eleven boundaries, one identifier."""
     required = sorted(matrix["required_spans"])
     names = traces.wait_for_spans(covered.trace_id, required, timeout=300.0)
+
+    def four_services() -> set[str] | None:
+        srv = traces.service_names(covered.trace_id)
+        return srv if len(srv) >= 4 else None
+
+    with contextlib.suppress(AssertionError):
+        stack.wait_until(
+            "at least four distinct services on trace",
+            four_services,
+            timeout=30.0,
+            interval=1.0,
+        )
+
     spans = traces.spans(covered.trace_id)
 
     stack.write_evidence(
@@ -130,7 +144,16 @@ def test_the_trace_spans_the_processes_the_contract_claims(
     traces: TraceBackend, covered: Covered
 ) -> None:
     """IP10's input contract lists distinct emitters; one service means one process."""
-    services = traces.service_names(covered.trace_id)
+    def four_services() -> set[str] | None:
+        srv = traces.service_names(covered.trace_id)
+        return srv if len(srv) >= 4 else None
+
+    services = stack.wait_until(
+        "at least four distinct services on trace",
+        four_services,
+        timeout=30.0,
+        interval=1.0,
+    )
 
     assert len(services) >= 4, f"only {sorted(services)} reported spans on this trace"
 

@@ -76,6 +76,8 @@ def test_every_scraped_target_is_up(prometheus: Prometheus) -> None:
                     "name": rule.get("name"),
                     "type": rule.get("type"),
                     "health": rule.get("health"),
+                    "state": rule.get("state"),
+                    "query": rule.get("query"),
                     "duration": rule.get("duration"),
                     "labels": rule.get("labels"),
                     "annotations": rule.get("annotations"),
@@ -158,6 +160,30 @@ def test_grafana_is_provisioned_from_configuration(
 
     found = list(dashboards.json())
     sources = list(datasources.json())
+    details = []
+    for entry in found:
+        uid = entry.get("uid")
+        if not uid:
+            continue
+        response = httpx.get(
+            f"{base_url.rstrip('/')}/api/dashboards/uid/{uid}",
+            auth=auth,
+            timeout=stack.HTTP_TIMEOUT,
+        )
+        response.raise_for_status()
+        dashboard = response.json().get("dashboard") or {}
+        details.append(
+            {
+                "uid": uid,
+                "panels": [
+                    {
+                        "title": panel.get("title"),
+                        "queries": [target.get("expr") for target in panel.get("targets", [])],
+                    }
+                    for panel in dashboard.get("panels", [])
+                ],
+            }
+        )
 
     stack.write_evidence(
         "ip09-grafana-dashboards.json",
@@ -170,6 +196,7 @@ def test_grafana_is_provisioned_from_configuration(
             "datasources": [
                 {"name": entry.get("name"), "type": entry.get("type")} for entry in sources
             ],
+            "dashboard_details": details,
         },
     )
 

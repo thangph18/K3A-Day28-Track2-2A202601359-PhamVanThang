@@ -1,0 +1,30 @@
+{
+  "evidence_schema_version": "1",
+  "captured_at": "2026-09-03T05:02:10.090447+00:00",
+  "git_sha": "3115c5583d622e9d76befe034fc5e3f1ef34ec23",
+  "working_tree_dirty": true,
+  "producer": "pytest live integration journey",
+  "entity": {
+    "asker_id": "it-j1-1c2a55e9"
+  },
+  "feature_service": "asker_serving_v1",
+  "features": {
+    "schema_version": "1",
+    "asker_id": "it-j1-1c2a55e9",
+    "feedback_count": 1,
+    "avg_rating": 5.0,
+    "negative_ratio": 0.0,
+    "last_event_ts": "2026-09-03T05:01:23Z",
+    "delta_version": 20
+  },
+  "statuses": {
+    "asker_id": "PRESENT",
+    "delta_version": "PRESENT",
+    "negative_ratio": "PRESENT",
+    "avg_rating": "PRESENT",
+    "feedback_count": "PRESENT"
+  },
+  "degraded": false,
+  "freshness_seconds": 47.011923,
+  "lookup_ms": 194.4118000101298
+}

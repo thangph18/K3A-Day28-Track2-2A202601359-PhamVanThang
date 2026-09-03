@@ -1,0 +1,52 @@
+{
+  "evidence_schema_version": "1",
+  "captured_at": "2026-09-03T05:06:16.940743+00:00",
+  "git_sha": "3115c5583d622e9d76befe034fc5e3f1ef34ec23",
+  "working_tree_dirty": true,
+  "producer": "pytest live integration journey",
+  "grafana_url": "http://localhost:3000",
+  "dashboards": [
+    {
+      "title": "Lab 28 Platform Overview",
+      "uid": "lab28-platform",
+      "url": "/d/lab28-platform/lab-28-platform-overview"
+    }
+  ],
+  "datasources": [
+    {
+      "name": "Prometheus",
+      "type": "prometheus"
+    }
+  ],
+  "dashboard_details": [
+    {
+      "uid": "lab28-platform",
+      "panels": [
+        {
+          "title": "Request rate",
+          "queries": [
+            "sum(rate(lab28_requests_total[1m]))"
+          ]
+        },
+        {
+          "title": "Errors",
+          "queries": [
+            "sum(rate(lab28_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(lab28_requests_total[5m])), 1)"
+          ]
+        },
+        {
+          "title": "Request duration",
+          "queries": [
+            "histogram_quantile(0.95, sum by (le) (rate(lab28_request_seconds_bucket[5m])))"
+          ]
+        },
+        {
+          "title": "Pipeline saturation / lag",
+          "queries": [
+            "lab28_consumer_lag"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "evidence_schema_version": "1",
+  "captured_at": "2026-09-03T06:35:25.985781+00:00",
+  "git_sha": "3115c5583d622e9d76befe034fc5e3f1ef34ec23",
+  "working_tree_dirty": true,
+  "producer": "lab28 evidence",
+  "reachable": true,
+  "has_champion": true,
+  "version": "2",
+  "run_id": "09656058afc94c578857ad789b50e68c",
+  "detail": "lab28-rag-release v2 is champion"
+}

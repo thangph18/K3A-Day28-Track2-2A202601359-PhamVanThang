@@ -1,0 +1,27 @@
+{
+  "evidence_schema_version": "1",
+  "captured_at": "2026-09-03T05:01:23.015856+00:00",
+  "git_sha": "3115c5583d622e9d76befe034fc5e3f1ef34ec23",
+  "working_tree_dirty": true,
+  "producer": "pytest live integration journey",
+  "gateway_url": "http://localhost:8080",
+  "route": "/health",
+  "configured_rps": 10,
+  "requests_sent": 30,
+  "accepted": 10,
+  "rejected": 20,
+  "rate_limited_stat": 602.0,
+  "bucket_refilled": true,
+  "gateway_healthz": {
+    "status": 200,
+    "served_without_upstream": true
+  },
+  "sample_200": {
+    "status": 200,
+    "x-request-id": "67f58284-e4ee-96f1-97d1-89dacc8953b9"
+  },
+  "sample_429": {
+    "status": 429,
+    "x-request-id": "aee7b99a-e709-9af0-a381-3e7a8393f87f"
+  }
+}

@@ -82,13 +82,20 @@ def test_the_bucket_refills(gateway: httpx.Client, burst: Burst) -> None:
 
 
 def test_the_gateway_counts_what_it_refused(
-    gateway_admin: str, burst: Burst, settings: Settings
+    gateway: httpx.Client, gateway_admin: str, burst: Burst, settings: Settings
 ) -> None:
     """The rejections have to be visible where the gateway's own stats are read."""
     exposition = stack.scrape(f"{gateway_admin.rstrip('/')}/stats/prometheus")
     rate_limited = stack.metric_total(exposition, "envoy_http_local_rate_limit_rate_limited")
+    before = _health_requests(settings)
+    gateway_health = gateway.get("/healthz")
+    after = _health_requests(settings)
+    recovered = gateway.get(PROBE_ROUTE)
 
     assert rate_limited > 0, "the limiter fired but published nothing to alert on"
+    assert gateway_health.status_code == 200
+    assert after == before, "the gateway's health route reached the application"
+    assert recovered.status_code == 200, "the rate-limit bucket did not refill"
 
     stack.write_evidence(
         "ip08-gateway.json",
@@ -100,6 +107,11 @@ def test_the_gateway_counts_what_it_refused(
             "accepted": sum(1 for status in burst.statuses if status == 200),
             "rejected": burst.rejections,
             "rate_limited_stat": rate_limited,
+            "bucket_refilled": recovered.status_code == 200,
+            "gateway_healthz": {
+                "status": gateway_health.status_code,
+                "served_without_upstream": after == before,
+            },
             "sample_200": {
                 "status": burst.accepted.status_code if burst.accepted else None,
                 "x-request-id": (

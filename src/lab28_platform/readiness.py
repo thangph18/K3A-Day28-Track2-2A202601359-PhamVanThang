@@ -324,6 +324,8 @@ def integration_report(settings: Settings, *, matrix_path: Path | None = None) -
         "passing_points": len(passing),
         "unverified_points": len(points) - len(verified),
         "score": round(100 * len(passing) / len(verified)) if verified else 0,
+        "score_scope": "passing percentage among probes executed by this process; not rubric score",
+        "rubric_score": None,
         "pillars": _pillar_scores(verified),
         "points": points,
     }

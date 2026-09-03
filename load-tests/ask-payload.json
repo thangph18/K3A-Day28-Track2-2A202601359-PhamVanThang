@@ -1,0 +1,5 @@
+{
+  "asker_id": "load-test-observer",
+  "question": "Nền tảng dữ liệu của lab này gồm những thành phần nào?",
+  "top_k": 3
+}

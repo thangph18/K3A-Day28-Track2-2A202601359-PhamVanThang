@@ -131,9 +131,12 @@ def test_the_version_carries_the_provenance_an_incident_review_needs(
     settings: Settings, promoted: Promotion, mlflow_client: Any
 ) -> None:
     """Which prompt, which model, which data — answerable from the version alone."""
+    import mlflow
+
     entry = mlflow_client.get_model_version(
         settings.mlflow.model_name, promoted.release.version
     )
+    model_info = mlflow.models.get_model_info(entry.source)
 
     assert entry.tags[TAG_PROMPT_VERSION] == promoted.prompt_version
     assert entry.tags[TAG_VLLM_MODEL] == settings.vllm.model_id
@@ -149,6 +152,10 @@ def test_the_version_carries_the_provenance_an_incident_review_needs(
             "version": promoted.release.version,
             "run_id": promoted.release.run_id,
             "alias": settings.mlflow.alias,
+            "registry_status": entry.status,
+            "model_source": entry.source,
+            "artifact_uri": model_info.artifact_path,
+            "signature": model_info.signature.to_dict() if model_info.signature else None,
             "tags": dict(entry.tags),
             "promoted_from": promoted.previous_version,
         },
@@ -227,6 +234,21 @@ def test_the_rolled_back_release_still_resolves_completely(
     assert resolved.version == rolled_back.version
     assert resolved.prompt_template
     assert resolved.vllm_model_id
+
+    stack.write_evidence(
+        "journey-j3-promotion-rollback.json",
+        {
+            "journey": "IT-J3-promotion-rollback",
+            "model_name": resolved.name,
+            "alias": resolved.alias,
+            "starting_version": promoted.previous_version,
+            "promoted_version": promoted.release.version,
+            "promoted_run_id": promoted.release.run_id,
+            "rolled_back_version": rolled_back.version,
+            "resolved_after_rollback": resolved.to_dict(),
+            "assertion": "the alias moved to a new release and resolved after rollback",
+        },
+    )
 
 
 @pytest.mark.gpu

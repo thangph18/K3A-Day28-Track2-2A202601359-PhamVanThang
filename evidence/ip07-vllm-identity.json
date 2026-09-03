@@ -1,0 +1,29 @@
+{
+  "evidence_schema_version": "1",
+  "captured_at": "2026-09-03T06:35:27.902486+00:00",
+  "git_sha": "3115c5583d622e9d76befe034fc5e3f1ef34ec23",
+  "working_tree_dirty": true,
+  "producer": "lab28 evidence",
+  "reachable": true,
+  "version": "0.28.0",
+  "served_models": [
+    "Qwen/Qwen3-1.7B"
+  ],
+  "vllm_metric_names": [
+    "vllm:cache_config_info",
+    "vllm:e2e_request_latency_seconds",
+    "vllm:e2e_request_latency_seconds_bucket",
+    "vllm:e2e_request_latency_seconds_count",
+    "vllm:e2e_request_latency_seconds_created",
+    "vllm:e2e_request_latency_seconds_sum",
+    "vllm:engine_sleep_state",
+    "vllm:estimated_flops_per_gpu_created",
+    "vllm:estimated_flops_per_gpu_total",
+    "vllm:estimated_read_bytes_per_gpu_created",
+    "vllm:estimated_read_bytes_per_gpu_total",
+    "vllm:estimated_write_bytes_per_gpu_created"
+  ],
+  "vllm_metric_count": 111,
+  "is_real_vllm": true,
+  "detail": "vLLM identity confirmed"
+}

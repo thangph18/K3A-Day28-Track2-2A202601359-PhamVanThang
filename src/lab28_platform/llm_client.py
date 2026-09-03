@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import httpx
+from opentelemetry import propagate
 
 from lab28_platform import metrics
 from lab28_platform.settings import VLLMSettings
@@ -235,8 +236,10 @@ class VLLMClient:
             },
         ) as active:
             started = time.perf_counter()
+            headers = dict(self._client.headers)
+            propagate.inject(headers)
             try:
-                response = self._client.post(url, json=payload)
+                response = self._client.post(url, json=payload, headers=headers)
                 response.raise_for_status()
                 body = response.json()
             except httpx.TimeoutException as error:

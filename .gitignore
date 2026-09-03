@@ -4,5 +4,11 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .ruff_cache/
-evidence/
+.tools/
+# Evidence is part of the assessed submission. Runtime databases/caches stay
+# ignored above and under .lab28/, but the small, reviewable evidence pack must
+# be versioned with the report that cites it.
+evidence/*.tmp
 readiness-report.json
+.env
+.env.*

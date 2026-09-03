@@ -491,10 +491,54 @@ def test_the_replayed_event_does_not_duplicate_the_row(
 # -- recovery -----------------------------------------------------------------
 
 
-def test_the_platform_ends_where_it_started(api: httpx.Client, baseline: Baseline) -> None:
+def test_the_platform_ends_where_it_started(
+    settings: Settings,
+    api: httpx.Client,
+    baseline: Baseline,
+    poison_batch: PoisonBatch,
+    replayed: Replay,
+) -> None:
     """The receipt for every container this module stopped."""
     status_code, body = _wait_for_status(api, baseline.status, timeout=180.0)
 
     assert status_code == baseline.status_code
     assert _component(body, "feast")["ready"] is True
     assert _component(body, "qdrant")["ready"] is True
+
+    from lab28_platform import delta_store
+
+    good_rows = [
+        row
+        for row in delta_store.read_rows(settings.feedback_table)
+        if row.get("asker_id") == poison_batch.asker_id
+    ]
+    replayed_rows = [
+        row
+        for row in delta_store.read_rows(settings.feedback_table)
+        if row.get("asker_id") == replayed.asker_id
+    ]
+    stack.write_evidence(
+        "journey-j4-failure-recovery.json",
+        {
+            "journey": "IT-J4-degraded-recovery",
+            "baseline": {"http_status": baseline.status_code, "readiness": baseline.status},
+            "recovered": {"http_status": status_code, "readiness": body["status"]},
+            "dependency_recovery": {
+                "feast_ready": _component(body, "feast")["ready"],
+                "qdrant_ready": _component(body, "qdrant")["ready"],
+            },
+            "poison_message": {
+                "dag_run_id": poison_batch.run["dag_run_id"],
+                "dead_letters_before": poison_batch.dead_letters_before,
+                "dead_letters_after": poison_batch.dead_letters_after,
+                "good_rows_preserved": len(good_rows),
+            },
+            "dlq_replay": {
+                "dag_run_id": replayed.run["dag_run_id"],
+                "result": replayed.result,
+                "rows_after_replay": len(replayed_rows),
+                "idempotency_key": replayed.idempotency_key,
+            },
+            "assertion": "dependencies recovered; good data survived poison input; replay produced one row",
+        },
+    )

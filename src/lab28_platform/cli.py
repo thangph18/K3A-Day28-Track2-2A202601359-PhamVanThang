@@ -23,6 +23,7 @@ import json
 import shutil
 import subprocess
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated, Any
 
@@ -576,6 +577,29 @@ def evidence(
             failed[filename] = f"{type(error).__name__}: {error}"
             _note(f"skipped {filename}: {failed[filename]}")
             return
+        if isinstance(payload, dict):
+            revision = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=False,
+            ).stdout.strip()
+            dirty = bool(
+                subprocess.run(
+                    ["git", "status", "--porcelain", "--untracked-files=no"],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                ).stdout.strip()
+            )
+            payload = {
+                "evidence_schema_version": "1",
+                "captured_at": datetime.now(UTC).isoformat(),
+                "git_sha": revision or "unavailable",
+                "working_tree_dirty": dirty,
+                "producer": "lab28 evidence",
+                **payload,
+            }
         path = out / filename
         path.write_text(
             json.dumps(payload, indent=2, ensure_ascii=False, default=str), encoding="utf-8"
@@ -586,13 +610,18 @@ def evidence(
     def delta_history() -> Any:
         return {
             "feedback": {
+                "snapshot": delta_store.snapshot("feedback", settings.feedback_table).to_dict(),
                 "history": delta_store.commit_history(settings.feedback_table),
                 "time_travel": delta_store.time_travel_evidence(
                     "feedback", settings.feedback_table
                 ),
             },
             "documents": {
+                "snapshot": delta_store.snapshot("documents", settings.document_table).to_dict(),
                 "history": delta_store.commit_history(settings.document_table),
+                "time_travel": delta_store.time_travel_evidence(
+                    "documents", settings.document_table
+                ),
             },
         }
 

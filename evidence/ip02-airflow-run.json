@@ -1,0 +1,53 @@
+{
+  "evidence_schema_version": "1",
+  "captured_at": "2026-09-03T05:02:09.632792+00:00",
+  "git_sha": "3115c5583d622e9d76befe034fc5e3f1ef34ec23",
+  "working_tree_dirty": true,
+  "producer": "pytest live integration journey",
+  "dag_id": "lab28_ingestion_pipeline",
+  "dag_run_id": "it-f4701377",
+  "state": "success",
+  "conf": {
+    "traceparent": "00-ab0804dbe783449e9e5ce571a8e6b530-e0ebb2659ac24064-01"
+  },
+  "task_instances": [
+    {
+      "task_id": "drain_kafka_into_delta",
+      "state": "success",
+      "try_number": 1
+    },
+    {
+      "task_id": "refresh_online_features",
+      "state": "success",
+      "try_number": 1
+    },
+    {
+      "task_id": "index_new_documents",
+      "state": "success",
+      "try_number": 1
+    },
+    {
+      "task_id": "announce_processed_batch",
+      "state": "success",
+      "try_number": 1
+    }
+  ],
+  "asset_events": [
+    {
+      "uri": "lab28://delta/feedback",
+      "timestamp": "2026-09-03T05:01:48.168560Z"
+    },
+    {
+      "uri": "lab28://delta/documents",
+      "timestamp": "2026-09-03T05:01:48.170463Z"
+    },
+    {
+      "uri": "lab28://qdrant/lab28_documents",
+      "timestamp": "2026-09-03T05:02:00.997744Z"
+    },
+    {
+      "uri": "lab28://feast/asker_activity",
+      "timestamp": "2026-09-03T05:02:02.253952Z"
+    }
+  ]
+}
